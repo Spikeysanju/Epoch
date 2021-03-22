@@ -18,8 +18,9 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.components.Timer
 import com.example.androiddevchallenge.ui.theme.MyTheme
@@ -29,32 +30,30 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            val currentTheme = isSystemInDarkTheme()
+            val toggleTheme: () -> Unit = {
+                if (currentTheme) setDayTheme() else setDarkTheme()
+            }
+
             MyTheme {
-                MyApp()
+                MyApp(toggleTheme)
             }
         }
+    }
+
+    private fun setDayTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+
+    private fun setDarkTheme() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 }
 
 // Start building your app here!
 @Composable
-fun MyApp() {
-    val mainViewModel: MainViewModel = viewModel()
-    Timer(mainViewModel)
-}
-
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
-    }
+fun MyApp(toggleTheme: () -> Unit) {
+    val viewModel: MainViewModel = viewModel()
+    Timer(viewModel, toggleTheme)
 }
