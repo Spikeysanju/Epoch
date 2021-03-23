@@ -24,4 +24,3 @@ val pinkText = Color(0xFFF5CAC9)
 val card = Color(0xFFFFFFFF)
 val cardNight = Color(0xFF162544)
 val blue500 = Color(0xFF2525FF)
-

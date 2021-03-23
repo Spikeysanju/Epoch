@@ -50,11 +50,30 @@ import com.example.androiddevchallenge.utils.getFormattedTime
 import com.example.androiddevchallenge.viewmodel.MainViewModel
 
 @Composable
-fun Timer(viewModel: MainViewModel, toggleTheme: () -> Unit) {
+fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
-    val remainingTime = viewModel.currentTime.collectAsState().value
+    val currentTime = viewModel.currentTime.collectAsState().value
     val isRunning = viewModel.isRunning.collectAsState().value
 
+    val transitionData = updateCircularTransitionData(
+        remainingTime = currentTime,
+        totalTime = MainViewModel.totalTime
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        CountDownView(transition = transitionData)
+
+        Toolbar(toggleTheme)
+
+        CenterTimerText(currentTime)
+
+        FloatingButton(viewModel = viewModel, isRunning = isRunning)
+    }
+}
+
+@Composable
+fun CountDownView(transition: ArcTransition) {
     Canvas(
         modifier = Modifier
             .fillMaxSize()
@@ -65,9 +84,9 @@ fun Timer(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
             drawArc(
                 startAngle = 270f,
-                sweepAngle = 90f,
+                sweepAngle = transition.progress,
                 useCenter = false,
-                color = blue500,
+                color = transition.color,
                 style = Stroke(width = 100f, cap = StrokeCap.Round)
             )
 
@@ -78,12 +97,6 @@ fun Timer(viewModel: MainViewModel, toggleTheme: () -> Unit) {
             )
         }
     }
-
-    Toolbar(toggleTheme)
-
-    CenterTimerText(remainingTime)
-
-    FloatingButton(viewModel = viewModel, isRunning = isRunning)
 }
 
 @Composable
