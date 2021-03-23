@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.androiddevchallenge.components.Timer
+import com.example.androiddevchallenge.components.TimerScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import com.example.androiddevchallenge.viewmodel.MainViewModel
 
@@ -55,5 +55,5 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MyApp(toggleTheme: () -> Unit) {
     val viewModel: MainViewModel = viewModel()
-    Timer(viewModel, toggleTheme)
+    TimerScreen(viewModel, toggleTheme)
 }
