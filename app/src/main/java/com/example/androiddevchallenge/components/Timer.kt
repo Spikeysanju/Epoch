@@ -49,7 +49,6 @@ import com.example.androiddevchallenge.utils.Constants
 import com.example.androiddevchallenge.utils.getFormattedTime
 import com.example.androiddevchallenge.viewmodel.MainViewModel
 
-
 @Composable
 fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
@@ -71,7 +70,6 @@ fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
         FloatingButton(viewModel = viewModel, isRunning = isRunning)
     }
-
 }
 
 @Composable
@@ -99,7 +97,6 @@ fun CountDownView(transition: ArcTransition) {
             )
         }
     }
-
 }
 
 @Composable
