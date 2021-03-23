@@ -35,17 +35,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.ui.theme.blue200
 import com.example.androiddevchallenge.ui.theme.blue500
 import com.example.androiddevchallenge.ui.theme.blueBG
 import com.example.androiddevchallenge.ui.theme.blueText
 import com.example.androiddevchallenge.ui.theme.card
 import com.example.androiddevchallenge.utils.Constants
+import com.example.androiddevchallenge.utils.ViewState
 import com.example.androiddevchallenge.utils.getFormattedTime
 import com.example.androiddevchallenge.viewmodel.MainViewModel
 
@@ -66,9 +70,9 @@ fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
         Toolbar(toggleTheme)
 
-        CenterTimerText(currentTime)
+        CountDownTimerText(currentTime)
 
-        FloatingButton(viewModel = viewModel, isRunning = isRunning)
+        FloatingButton(isRunning = isRunning, viewModel = viewModel, transitionData)
     }
 }
 
@@ -82,12 +86,14 @@ fun CountDownView(transition: ArcTransition) {
 
         inset(size.width / 2 - Constants.TIMER_RADIUS, size.height / 2 - Constants.TIMER_RADIUS) {
 
+            val gradientBrush = Brush.linearGradient(listOf(blue500, blue200))
             drawArc(
+                brush = gradientBrush,
                 startAngle = 270f,
                 sweepAngle = transition.progress,
                 useCenter = false,
-                color = transition.color,
-                style = Stroke(width = 100f, cap = StrokeCap.Round)
+                style = Stroke(width = 100f, cap = StrokeCap.Round),
+                blendMode = BlendMode.SrcIn
             )
 
             drawCircle(
@@ -115,7 +121,7 @@ fun Toolbar(toggleTheme: () -> Unit) {
 }
 
 @Composable
-fun CenterTimerText(remainingTime: Long) {
+fun CountDownTimerText(remainingTime: Long) {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -128,21 +134,36 @@ fun CenterTimerText(remainingTime: Long) {
 }
 
 @Composable
-fun FloatingButton(isRunning: Boolean, viewModel: MainViewModel) {
-    val startIcon = Icons.Filled.PlayArrow
-    val stopIcon = Icons.Filled.Stop
-    var buttonColor by remember { mutableStateOf(blue500) }
-    var buttonIcon by remember { mutableStateOf(false) }
-
+fun FloatingButton(isRunning: Boolean, viewModel: MainViewModel, transitionData: ArcTransition) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(30.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
+
+        val startIcon = Icons.Filled.PlayArrow
+        val stopIcon = Icons.Filled.Stop
+        var buttonColor by remember { mutableStateOf(blue500) }
+        var buttonIcon by remember { mutableStateOf(false) }
+
+        when (viewModel.uiState.value) {
+            ViewState.Default -> {
+            }
+            is ViewState.Finished -> {
+                buttonIcon = false
+                buttonColor = blue500
+            }
+            is ViewState.Running -> {
+                buttonIcon = true
+                buttonColor = Color.Red
+            }
+            is ViewState.Error -> {
+            }
+        }
+
         FloatingActionButton(
             onClick = {
-
                 if (isRunning) {
                     viewModel.onResetClicked()
                     buttonIcon = false
