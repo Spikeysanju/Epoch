@@ -19,6 +19,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -54,25 +55,34 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.ui.theme.blue200
+import com.example.androiddevchallenge.ui.theme.blue400
 import com.example.androiddevchallenge.ui.theme.blue500
 import com.example.androiddevchallenge.ui.theme.blueBG
-import com.example.androiddevchallenge.ui.theme.blueText
 import com.example.androiddevchallenge.ui.theme.card
 import com.example.androiddevchallenge.ui.theme.deepGold
+import com.example.androiddevchallenge.ui.theme.pinkText
 import com.example.androiddevchallenge.utils.Constants
 import com.example.androiddevchallenge.utils.getFormattedTime
 import com.example.androiddevchallenge.viewmodel.MainViewModel
 import kotlin.math.roundToInt
 
 @Composable
-fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
+fun TimerScreen(viewModel: MainViewModel) {
 
+    var progress by remember { mutableStateOf(0f) }
     val currentTime = viewModel.currentTime.collectAsState().value
     val isRunning = viewModel.isRunning.collectAsState().value
     val transitionData = updateCircularTransitionData(
         remainingTime = currentTime,
         totalTime = MainViewModel.totalTime
     )
+
+    // animation state for on and off arc
+    val default = animateFloatAsState(
+        targetValue = if (isRunning) transitionData.progress else 0f,
+        animationSpec = tween(300, easing = LinearEasing)
+    )
+    progress = default.value
 
     Box(
         modifier = Modifier
@@ -81,18 +91,18 @@ fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
 
-        Kabel(viewModel, isRunning)
+        CabelView(viewModel, isRunning)
 
-        CountDownView(transition = transitionData)
+        CountDownView(progress)
 
-        Toolbar(toggleTheme)
+        Toolbar()
 
         CountDownTimerText(remainingTime = currentTime)
     }
 }
 
 @Composable
-fun CountDownView(transition: ArcTransition) {
+fun CountDownView(progress: Float) {
     Canvas(
         modifier = Modifier
             .wrapContentSize()
@@ -101,11 +111,11 @@ fun CountDownView(transition: ArcTransition) {
 
         inset(size.width / 2 - Constants.TIMER_RADIUS, size.height / 2 - Constants.TIMER_RADIUS) {
 
-            val gradientBrush = Brush.linearGradient(listOf(blue500, blue200))
+            val gradientBrush = Brush.linearGradient(listOf(blue500, blue200, blue400))
             drawArc(
                 brush = gradientBrush,
                 startAngle = 270f,
-                sweepAngle = transition.progress,
+                sweepAngle = progress,
                 useCenter = false,
                 style = Stroke(width = 100f, cap = StrokeCap.Round),
                 blendMode = BlendMode.SrcIn
@@ -121,17 +131,13 @@ fun CountDownView(transition: ArcTransition) {
 }
 
 @Composable
-fun Toolbar(toggleTheme: () -> Unit) {
+fun Toolbar() {
     Box(
         modifier = Modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.TopStart
+        contentAlignment = Alignment.TopCenter
     ) {
-        TopBar(
-            onToggle = {
-                toggleTheme()
-            }
-        )
+        TopBar()
     }
 }
 
@@ -153,18 +159,17 @@ fun TimeRemaining(timeRemaining: Long) {
     val formattedTime = getFormattedTime(millis = timeRemaining)
     Text(
         text = formattedTime,
-        color = blueText,
+        color = pinkText,
         style = MaterialTheme.typography.h4
     )
 }
 
 @Composable
-fun Kabel(viewModel: MainViewModel, isRunning: Boolean) {
+fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
 
-    // actual state for icon color
+    // states for icon color, run check & cable wire offset
     var iconColor by remember { mutableStateOf(Color.Gray) }
-
-    // actual composable state for offsetY axis
+    val isRunningNow by remember { mutableStateOf(isRunning) }
     var offsetY by remember { mutableStateOf(1600f) }
 
     iconColor = if (offsetY <= 1300) {
@@ -194,11 +199,9 @@ fun Kabel(viewModel: MainViewModel, isRunning: Boolean) {
                     }
                 ),
                 onDragStopped = {
-//                    offsetY = if (offsetY <= 1300) 1300f else 1600f
-
                     if (offsetY <= 1300) {
                         offsetY = 1300f
-                        if (isRunning) {
+                        if (isRunningNow) {
                             viewModel.onResetClicked()
                         } else {
                             viewModel.onStartClicked()
@@ -217,15 +220,16 @@ fun Kabel(viewModel: MainViewModel, isRunning: Boolean) {
         Box(
             Modifier
                 .size(20.dp, animatedHeightState.value)
-                .background(Color.White),
+                .background(card),
         ) {
 
             Box(
                 Modifier
                     .requiredSize(100.dp, 100.dp)
-                    .background(Color.White),
+                    .background(card),
                 contentAlignment = Alignment.Center
             ) {
+
                 IconButton(onClick = { /*TODO*/ }) {
                     val icon = painterResource(id = R.drawable.ic_lightning)
                     Icon(

@@ -18,8 +18,6 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.components.TimerScreen
@@ -30,30 +28,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            val currentTheme = isSystemInDarkTheme()
-            val toggleTheme: () -> Unit = {
-                if (currentTheme) setDayTheme() else setDarkTheme()
-            }
-
             MyTheme {
-                MyApp(toggleTheme)
+                MyApp()
             }
         }
     }
-
-    private fun setDayTheme() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    }
-
-    private fun setDarkTheme() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-    }
 }
 
-// Start building your app here!
+// Application preview
 @Composable
-fun MyApp(toggleTheme: () -> Unit) {
+fun MyApp() {
     val viewModel: MainViewModel = viewModel()
-    TimerScreen(viewModel, toggleTheme)
+    TimerScreen(viewModel)
 }

@@ -17,8 +17,6 @@ package com.example.androiddevchallenge.viewmodel
 
 import android.os.CountDownTimer
 import androidx.lifecycle.ViewModel
-import com.example.androiddevchallenge.model.CountDownTime
-import com.example.androiddevchallenge.utils.ViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -31,20 +29,13 @@ class MainViewModel : ViewModel() {
     private var _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
 
-    private val _uiState = MutableStateFlow<ViewState>(ViewState.Default)
-
-    // UI collect from this stateFlow to get the state updates
-    val uiState: StateFlow<ViewState> = _uiState
-
     private fun startTimer() {
         timer = object : CountDownTimer(totalTime, interval) {
             override fun onTick(millisUntilFinished: Long) {
                 _currentTime.value = millisUntilFinished
-                _uiState.value = ViewState.Running(CountDownTime(millisUntilFinished))
             }
 
             override fun onFinish() {
-                _uiState.value = ViewState.Finished(CountDownTime(totalTime))
                 _currentTime.value = totalTime
                 _isRunning.value = false
             }
@@ -61,7 +52,6 @@ class MainViewModel : ViewModel() {
         if (_isRunning.value) {
             timer?.cancel()
             _currentTime.value = totalTime
-            _uiState.value = ViewState.Finished(CountDownTime(totalTime))
             _isRunning.value = false
         }
     }
@@ -70,7 +60,6 @@ class MainViewModel : ViewModel() {
         super.onCleared()
         timer?.cancel()
         _currentTime.value = totalTime
-        _uiState.value = ViewState.Finished(CountDownTime(totalTime))
     }
 
     companion object {
