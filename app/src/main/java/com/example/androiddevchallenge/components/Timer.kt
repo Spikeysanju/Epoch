@@ -54,7 +54,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.R
@@ -249,10 +248,4 @@ fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun preview() {
-    Pin()
 }
