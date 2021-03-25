@@ -223,7 +223,8 @@ fun CableView(viewModel: MainViewModel, isRunning: Boolean) {
      * composable state for cable color
      */
     val animatedColor = animateColorAsState(
-        targetValue = iconColor, animationSpec = tween(300, easing = LinearEasing)
+        targetValue = iconColor,
+        animationSpec = tween(300, easing = LinearEasing)
     )
 
     // Box1 - Root Layout
