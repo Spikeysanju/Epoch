@@ -59,17 +59,17 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.epoch.components.Toolbar
 import com.example.epoch.components.updateCircularTransitionData
-import com.example.epoch.ui.theme.blue200
-import com.example.epoch.ui.theme.blue400
-import com.example.epoch.ui.theme.blue500
-import com.example.epoch.ui.theme.blueBG
-import com.example.epoch.ui.theme.card
-import com.example.epoch.ui.theme.deepGold
-import com.example.epoch.ui.theme.pinkText
 import com.example.epoch.utils.Constants
 import com.example.epoch.utils.getFormattedTime
 import com.example.epoch.viewmodel.MainViewModel
 import dev.spikeysanju.epoch.R
+import dev.spikeysanju.epoch.ui.theme.blue200
+import dev.spikeysanju.epoch.ui.theme.blue400
+import dev.spikeysanju.epoch.ui.theme.blue500
+import dev.spikeysanju.epoch.ui.theme.blueBG
+import dev.spikeysanju.epoch.ui.theme.card
+import dev.spikeysanju.epoch.ui.theme.deepGold
+import dev.spikeysanju.epoch.ui.theme.whiteText
 import kotlin.math.roundToInt
 
 @Composable
@@ -168,7 +168,7 @@ fun TimeRemaining(timeRemaining: Long) {
     val formattedTime = getFormattedTime(millis = timeRemaining)
     Text(
         text = formattedTime,
-        color = pinkText,
+        color = whiteText,
         style = MaterialTheme.typography.h4
     )
 }

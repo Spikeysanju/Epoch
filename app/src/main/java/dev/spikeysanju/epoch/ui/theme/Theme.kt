@@ -21,16 +21,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import dev.spikeysanju.epoch.ui.theme.blueBG
+import dev.spikeysanju.epoch.ui.theme.card
+import dev.spikeysanju.epoch.ui.theme.whiteText
 
 private val DarkColorPalette = darkColors(
     background = blueBG,
-    surface = pinkText,
+    surface = whiteText,
     onSurface = card
 )
 
 private val LightColorPalette = lightColors(
     background = blueBG,
-    surface = pinkText,
+    surface = whiteText,
     onSurface = card
 )
 
