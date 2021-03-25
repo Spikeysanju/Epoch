@@ -26,7 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.epoch.ui.theme.pinkText
+import dev.spikeysanju.epoch.ui.theme.whiteText
 
 @Composable
 fun TopBar() {
@@ -35,7 +35,7 @@ fun TopBar() {
         modifier = Modifier.padding(32.dp),
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.h4,
-        color = pinkText
+        color = whiteText
     )
 }
 

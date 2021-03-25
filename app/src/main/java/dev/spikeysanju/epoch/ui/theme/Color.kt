@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.epoch.ui.theme
+package dev.spikeysanju.epoch.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
 val blueBG = Color(0xFF0C1B3A)
-val pinkText = Color(0xFFF5CAC9)
+val whiteText = Color(0xFFFFFFFF)
 val card = Color(0xFF162544)
 val blue500 = Color(0xFF0052D4)
-val bloodRed = Color(0xFFEB0028)
 
 // progress gradient
 val blue400 = Color(0xFF4364F7)
