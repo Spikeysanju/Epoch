@@ -29,9 +29,11 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -44,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -131,17 +134,6 @@ fun CountDownView(progress: Float) {
 }
 
 @Composable
-fun Toolbar() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        TopBar()
-    }
-}
-
-@Composable
 fun CountDownTimerText(remainingTime: Long) {
     Box(
         modifier = Modifier
@@ -165,6 +157,16 @@ fun TimeRemaining(timeRemaining: Long) {
 }
 
 @Composable
+fun Pin() {
+    Box(
+        Modifier
+            .requiredSize(60.dp)
+            .clip(RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp))
+            .background(Color.Gray)
+    )
+}
+
+@Composable
 fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
 
     // states for icon color, run check & cable wire offset
@@ -172,7 +174,7 @@ fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
     val isRunningNow by remember { mutableStateOf(isRunning) }
     var offsetY by remember { mutableStateOf(1600f) }
 
-    iconColor = if (offsetY <= 1300) {
+    iconColor = if (offsetY <= 1200) {
         deepGold
     } else {
         Color.Gray
@@ -180,7 +182,7 @@ fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
 
     // composable state for cable wire height
     val animatedHeightState = animateDpAsState(
-        targetValue = if (offsetY <= 1300) offsetY.dp else offsetY.dp,
+        targetValue = if (offsetY <= 1200) offsetY.dp else offsetY.dp,
         animationSpec = tween(300, easing = LinearEasing)
     )
     // composable state for cable color
@@ -199,8 +201,8 @@ fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
                     }
                 ),
                 onDragStopped = {
-                    if (offsetY <= 1300) {
-                        offsetY = 1300f
+                    if (offsetY <= 1200) {
+                        offsetY = 1200f
                         if (isRunningNow) {
                             viewModel.onResetClicked()
                         } else {
@@ -223,9 +225,12 @@ fun CabelView(viewModel: MainViewModel, isRunning: Boolean) {
                 .background(card),
         ) {
 
+            Pin()
+
             Box(
                 Modifier
                     .requiredSize(100.dp, 100.dp)
+                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
                     .background(card),
                 contentAlignment = Alignment.Center
             ) {
