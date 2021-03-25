@@ -85,7 +85,7 @@ fun TimerScreen(viewModel: MainViewModel) {
 
     /**
      * animation state for On and Off arc
-     * @param transition
+     * @param transitionData
      */
 
     val default = animateFloatAsState(
