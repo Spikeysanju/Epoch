@@ -15,7 +15,7 @@
  */
 package com.example.androiddevchallenge.components
 
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -38,7 +38,7 @@ fun updateCircularTransitionData(
     val transition = updateTransition(targetState = remainingTime)
 
     val progress = transition.animateFloat(
-        transitionSpec = { tween(1500, easing = LinearEasing) }
+        transitionSpec = { tween(1000, easing = FastOutSlowInEasing) }
     ) { timeLeft ->
         if (timeLeft < 0) {
             360f

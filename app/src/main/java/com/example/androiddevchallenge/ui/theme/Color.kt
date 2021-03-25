@@ -28,3 +28,4 @@ val blue500 = Color(0xFF0052D4)
 // progress gradient
 val blue400 = Color(0xFF4364F7)
 val blue200 = Color(0xFF6FB1FC)
+val deepGold = Color(0xFFFFC850)
