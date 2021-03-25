@@ -60,6 +60,7 @@ class MainViewModel : ViewModel() {
     fun onResetClicked() {
         if (_isRunning.value) {
             timer?.cancel()
+            _currentTime.value = totalTime
             _uiState.value = ViewState.Finished(CountDownTime(totalTime))
             _isRunning.value = false
         }
@@ -68,6 +69,7 @@ class MainViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         timer?.cancel()
+        _currentTime.value = totalTime
         _uiState.value = ViewState.Finished(CountDownTime(totalTime))
     }
 

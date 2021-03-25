@@ -15,18 +15,26 @@
  */
 package com.example.androiddevchallenge.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,38 +49,45 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.ui.theme.blue200
 import com.example.androiddevchallenge.ui.theme.blue500
 import com.example.androiddevchallenge.ui.theme.blueBG
 import com.example.androiddevchallenge.ui.theme.blueText
 import com.example.androiddevchallenge.ui.theme.card
+import com.example.androiddevchallenge.ui.theme.deepGold
 import com.example.androiddevchallenge.utils.Constants
-import com.example.androiddevchallenge.utils.ViewState
 import com.example.androiddevchallenge.utils.getFormattedTime
 import com.example.androiddevchallenge.viewmodel.MainViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 
     val currentTime = viewModel.currentTime.collectAsState().value
     val isRunning = viewModel.isRunning.collectAsState().value
-
     val transitionData = updateCircularTransitionData(
         remainingTime = currentTime,
         totalTime = MainViewModel.totalTime
     )
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = blueBG),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Kabel(viewModel, isRunning)
 
         CountDownView(transition = transitionData)
 
         Toolbar(toggleTheme)
 
-        CountDownTimerText(currentTime)
-
-        FloatingButton(isRunning = isRunning, viewModel = viewModel, transitionData)
+        CountDownTimerText(remainingTime = currentTime)
     }
 }
 
@@ -80,7 +95,7 @@ fun TimerScreen(viewModel: MainViewModel, toggleTheme: () -> Unit) {
 fun CountDownView(transition: ArcTransition) {
     Canvas(
         modifier = Modifier
-            .fillMaxSize()
+            .wrapContentSize()
             .background(color = blueBG)
     ) {
 
@@ -128,63 +143,8 @@ fun CountDownTimerText(remainingTime: Long) {
         contentAlignment = Alignment.Center
     ) {
         TimeRemaining(
-            timeRemaining = remainingTime
+            timeRemaining = remainingTime,
         )
-    }
-}
-
-@Composable
-fun FloatingButton(isRunning: Boolean, viewModel: MainViewModel, transitionData: ArcTransition) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(30.dp),
-        contentAlignment = Alignment.BottomEnd
-    ) {
-
-        val startIcon = Icons.Filled.PlayArrow
-        val stopIcon = Icons.Filled.Stop
-        var buttonColor by remember { mutableStateOf(blue500) }
-        var buttonIcon by remember { mutableStateOf(false) }
-
-        when (viewModel.uiState.value) {
-            ViewState.Default -> {
-            }
-            is ViewState.Finished -> {
-                buttonIcon = false
-                buttonColor = blue500
-            }
-            is ViewState.Running -> {
-                buttonIcon = true
-                buttonColor = Color.Red
-            }
-            is ViewState.Error -> {
-            }
-        }
-
-        FloatingActionButton(
-            onClick = {
-                if (isRunning) {
-                    viewModel.onResetClicked()
-                    buttonIcon = false
-                    buttonColor = blue500
-                } else {
-                    viewModel.onStartClicked()
-                    buttonIcon = true
-                    buttonColor = Color.Red
-                }
-            },
-            backgroundColor = buttonColor, contentColor = Color.White
-        ) {
-
-            val icon = if (buttonIcon) {
-                rememberVectorPainter(image = stopIcon)
-            } else {
-                rememberVectorPainter(image = startIcon)
-            }
-
-            Icon(painter = icon, contentDescription = "Fab button")
-        }
     }
 }
 
@@ -196,4 +156,87 @@ fun TimeRemaining(timeRemaining: Long) {
         color = blueText,
         style = MaterialTheme.typography.h4
     )
+}
+
+@Composable
+fun Kabel(viewModel: MainViewModel, isRunning: Boolean) {
+
+    // actual state for icon color
+    var iconColor by remember { mutableStateOf(Color.Gray) }
+
+    // actual composable state for offsetY axis
+    var offsetY by remember { mutableStateOf(1600f) }
+
+    iconColor = if (offsetY <= 1300) {
+        deepGold
+    } else {
+        Color.Gray
+    }
+
+    // composable state for cable wire height
+    val animatedHeightState = animateDpAsState(
+        targetValue = if (offsetY <= 1300) offsetY.dp else offsetY.dp,
+        animationSpec = tween(300, easing = LinearEasing)
+    )
+    // composable state for cable color
+    val animatedColor = animateColorAsState(
+        targetValue = iconColor, animationSpec = tween(300, easing = LinearEasing)
+    )
+
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(0, offsetY.roundToInt()) }
+            .draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState(
+                    onDelta = {
+                        offsetY += it
+                    }
+                ),
+                onDragStopped = {
+//                    offsetY = if (offsetY <= 1300) 1300f else 1600f
+
+                    if (offsetY <= 1300) {
+                        offsetY = 1300f
+                        if (isRunning) {
+                            viewModel.onResetClicked()
+                        } else {
+                            viewModel.onStartClicked()
+                        }
+                    } else {
+                        offsetY = 1600f
+                        viewModel.onResetClicked()
+                    }
+                }
+            )
+            .fillMaxSize()
+            .animateContentSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+
+        Box(
+            Modifier
+                .size(20.dp, animatedHeightState.value)
+                .background(Color.White),
+        ) {
+
+            Box(
+                Modifier
+                    .requiredSize(100.dp, 100.dp)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+                IconButton(onClick = { /*TODO*/ }) {
+                    val icon = painterResource(id = R.drawable.ic_lightning)
+                    Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp, 24.dp),
+                        tint = animatedColor.value
+                    )
+                }
+            }
+        }
+    }
 }
