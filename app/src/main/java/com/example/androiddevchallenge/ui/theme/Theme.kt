@@ -22,14 +22,14 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    background = blueBGNight,
+    background = blueBG,
     surface = pinkText,
-    onSurface = cardNight
+    onSurface = card
 )
 
 private val LightColorPalette = lightColors(
     background = blueBG,
-    surface = blueText,
+    surface = pinkText,
     onSurface = card
 )
 
